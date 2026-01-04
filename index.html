@@ -1,109 +1,648 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Heat 91.7 FM – Ad Clock</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Heat 91.7 FM – Pro Ad Clock</title>
 
-<style>
-body {
-  background: #000;
-  color: #00ff66;
-  font-family: Arial, Helvetica, sans-serif;
-  text-align: center;
-  padding: 20px;
-}
+  <style>
+    :root{
+      --bg:#050607;
+      --green:#00ff66;
+      --gold:#ffd700;
+      --white:#e9edf1;
+      --muted:#a8b0b8;
+      --red:#ff3b3b;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(0,255,102,0.10);
+      --stroke: rgba(255,255,255,0.12);
+    }
 
-.logo {
-  max-width: 180px;
-  margin-bottom: 15px;
-}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 50% 0%, rgba(0,255,102,0.12), transparent 60%),
+        radial-gradient(900px 500px at 80% 30%, rgba(255,215,0,0.10), transparent 55%),
+        radial-gradient(800px 400px at 10% 60%, rgba(0,255,102,0.08), transparent 55%),
+        linear-gradient(180deg, #000, var(--bg));
+      color:var(--white);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      overflow:hidden;
+    }
 
-h1 {
-  color: #ffd700;
-  font-size: 32px;
-}
+    .wrap{
+      height:100%;
+      padding: clamp(14px, 2.2vw, 28px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
 
-.time {
-  font-size: 42px;
-  margin: 20px 0;
-}
+    .card{
+      width:min(1200px, 96vw);
+      border:1px solid var(--stroke);
+      border-radius:24px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.28));
+      box-shadow:
+        0 0 40px rgba(0,255,102,0.15),
+        0 0 60px rgba(255,215,0,0.08);
+      padding: clamp(16px, 2.4vw, 28px);
+      position:relative;
+      overflow:hidden;
+    }
 
-.label {
-  color: #fff;
-  font-size: 20px;
-}
+    .glowLine{
+      position:absolute; inset:-2px -2px auto -2px;
+      height:6px;
+      background: linear-gradient(90deg, transparent, rgba(0,255,102,0.9), rgba(255,215,0,0.9), transparent);
+      filter: blur(1px);
+      opacity:0.75;
+      animation: sweep 4.5s linear infinite;
+    }
+    @keyframes sweep{ 0%{transform:translateX(-40%)} 100%{transform:translateX(40%)} }
 
-.countdown {
-  font-size: 60px;
-  margin-top: 15px;
-}
+    .top{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
 
-.warning {
-  color: red;
-  animation: blink 1s infinite;
-}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width: 280px;
+    }
 
-@keyframes blink {
-  50% { opacity: 0; }
-}
-</style>
+    .logo{
+      width:76px; height:76px;
+      border-radius:18px;
+      background: rgba(0,0,0,0.35);
+      border:1px solid var(--stroke);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      box-shadow: 0 0 24px rgba(0,255,102,0.18);
+    }
+    .logo img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      padding:8px;
+    }
+
+    .titleBlock h1{
+      margin:0;
+      font-size: clamp(20px, 2.2vw, 30px);
+      letter-spacing:0.5px;
+      color: var(--gold);
+      text-shadow: 0 0 12px rgba(255,215,0,0.22);
+    }
+    .titleBlock .sub{
+      margin-top:4px;
+      color: var(--muted);
+      font-size: clamp(12px, 1.2vw, 14px);
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--white);
+      padding:12px 14px;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active{ transform: scale(0.98); }
+    .btn.primary{
+      border-color: rgba(0,255,102,0.35);
+      background: rgba(0,255,102,0.10);
+      box-shadow: 0 0 22px rgba(0,255,102,0.14);
+    }
+    .btn.gold{
+      border-color: rgba(255,215,0,0.35);
+      background: rgba(255,215,0,0.10);
+      box-shadow: 0 0 22px rgba(255,215,0,0.10);
+    }
+    .pill{
+      font-size:12px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,0.25);
+      color: var(--muted);
+    }
+    .pill.ok{ color: var(--green); border-color: rgba(0,255,102,0.35); }
+    .pill.warn{ color: var(--gold); border-color: rgba(255,215,0,0.35); }
+    .pill.bad{ color: var(--red); border-color: rgba(255,59,59,0.35); }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap:16px;
+    }
+
+    @media (max-width: 900px){
+      .grid{ grid-template-columns:1fr; }
+      .controls{ justify-content:flex-start; }
+    }
+
+    .panel{
+      border:1px solid var(--stroke);
+      border-radius:20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.28));
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .label{
+      color: var(--muted);
+      font-weight:700;
+      letter-spacing:0.6px;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+    .big{
+      margin-top:10px;
+      font-size: clamp(34px, 4vw, 58px);
+      font-weight:900;
+      letter-spacing:0.6px;
+      color: var(--white);
+    }
+    .big.green{ color: var(--green); text-shadow: 0 0 20px rgba(0,255,102,0.18); }
+    .big.gold{ color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.16); }
+    .big.red{ color: var(--red); text-shadow: 0 0 20px rgba(255,59,59,0.12); }
+
+    .row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:baseline;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .kv{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width: 240px;
+    }
+    .val{
+      font-size:22px;
+      font-weight:900;
+      color: var(--white);
+    }
+
+    .eq{
+      position:absolute;
+      right:14px;
+      top:14px;
+      display:flex;
+      gap:4px;
+      opacity:0.55;
+    }
+    .bar{
+      width:5px;
+      height:24px;
+      border-radius:10px;
+      background: linear-gradient(180deg, var(--gold), var(--green));
+      animation: bounce 0.8s ease-in-out infinite;
+    }
+    .bar:nth-child(2){ animation-delay: 0.1s; }
+    .bar:nth-child(3){ animation-delay: 0.2s; }
+    .bar:nth-child(4){ animation-delay: 0.3s; }
+    .bar:nth-child(5){ animation-delay: 0.4s; }
+    @keyframes bounce{
+      0%,100%{ transform:scaleY(0.5); opacity:0.6; }
+      50%{ transform:scaleY(1.4); opacity:1; }
+    }
+
+    .liveBanner{
+      margin-top:12px;
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px solid rgba(255,59,59,0.30);
+      background: rgba(255,59,59,0.10);
+      display:none;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .liveBanner.show{ display:flex; }
+    .liveText{
+      font-weight:1000;
+      letter-spacing:0.8px;
+      text-transform:uppercase;
+      color: var(--red);
+      font-size: clamp(16px, 2vw, 20px);
+      animation: blink 1s infinite;
+    }
+    @keyframes blink{
+      50%{ opacity: 0.3; }
+    }
+    .liveRight{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .mini{
+      color: var(--white);
+      font-weight:900;
+      font-size: 16px;
+    }
+
+    .footer{
+      margin-top:14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      color: var(--muted);
+      font-size:12px;
+    }
+    .hint{
+      color: rgba(233,237,241,0.75);
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border:1px solid var(--stroke);
+      padding:2px 8px;
+      border-radius:10px;
+      background: rgba(0,0,0,0.35);
+      color: var(--white);
+    }
+  </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <div class="card">
+      <div class="glowLine"></div>
 
-<img src="heat-logo.png" class="logo" alt="Heat 91.7 FM">
+      <div class="top">
+        <div class="brand">
+          <div class="logo">
+            <!-- Put your Heat logo file in same folder named: heat-logo.png -->
+            <img src="heat-logo.png" alt="Heat 91.7 FM Logo" />
+          </div>
+          <div class="titleBlock">
+            <h1>HEAT 91.7 FM • PRO AD CLOCK</h1>
+            <div class="sub">Fort Lauderdale • Live break awareness for DJs • ET (Florida)</div>
+          </div>
+        </div>
 
-<h1>HEAT 91.7 FM – AD CLOCK</h1>
+        <div class="controls">
+          <button class="btn primary" id="enableAlertsBtn">🔊 Enable Audio & Alerts</button>
+          <button class="btn gold" id="fullscreenBtn">🖥️ Full Screen (Kiosk)</button>
+          <span class="pill" id="alertStatus">Alerts: OFF</span>
+        </div>
+      </div>
 
-<div class="label">Current Time (ET)</div>
-<div class="time" id="currentTime"></div>
+      <div class="grid">
+        <div class="panel">
+          <div class="eq" aria-hidden="true">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
 
-<div class="label">Next Ad Break</div>
-<div class="time" id="nextAd"></div>
+          <div class="label">Current Time (ET)</div>
+          <div class="big" id="currentTime">--:--:--</div>
 
-<div class="label">ADS IN</div>
-<div class="countdown" id="countdown"></div>
+          <div class="row">
+            <div class="kv">
+              <div class="label">Next Ad Break</div>
+              <div class="val" id="nextAdTime">--:--</div>
+            </div>
+            <div class="kv">
+              <div class="label">Ads In</div>
+              <div class="val" id="countdown">--:--</div>
+            </div>
+          </div>
+
+          <div class="liveBanner" id="liveBanner">
+            <div class="liveText">LIVE ADS PLAYING</div>
+            <div class="liveRight">
+              <div class="mini">Ad Length: <span id="adLengthLabel">--:--</span></div>
+              <div class="mini">Remaining: <span id="adRemainingLabel">--:--</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="label">Break Settings</div>
+          <div class="row">
+            <div class="kv">
+              <div class="label">Ad Interval</div>
+              <div class="val"><span id="intervalLabel">60</span> min</div>
+            </div>
+            <div class="kv">
+              <div class="label">Ad Break Length</div>
+              <div class="val"><span id="breakLenLabel">02:00</span></div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px" class="label">Status</div>
+          <div class="row">
+            <span class="pill ok" id="statusPill">Clock Running</span>
+            <span class="pill" id="warnPill">30s Warning: OFF</span>
+            <span class="pill" id="vibePill">Vibration: OFF</span>
+          </div>
+
+          <div class="footer">
+            <div class="hint">
+              Studio TV tip: press <span class="kbd">F11</span> (Chrome) after Full Screen.
+            </div>
+            <div class="hint">
+              Mobile tip: “Add to Home Screen” for a kiosk-like app.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
 <script>
-function updateClock() {
-  const now = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-  );
+/** =========================
+ *  CONFIG (EDIT THESE)
+ *  =========================
+ *  intervalMinutes:
+ *    - 60 = top of every hour
+ *    - 20 = every :00 :20 :40
+ *    - 15 = :00 :15 :30 :45
+ *
+ *  breakLengthSeconds:
+ *    - length of ad break, so DJs can see remaining
+ */
+const CONFIG = {
+  intervalMinutes: 60,
+  breakLengthSeconds: 120, // 2 minutes default
+  warningAtSeconds: 30,    // audible + vibration warning at 30s before ads
+  fasterBeepLastSeconds: 10 // beep each second in final 10s
+};
 
-  const minutes = now.getMinutes();
-  const seconds = now.getSeconds();
+// UI labels
+document.getElementById("intervalLabel").textContent = CONFIG.intervalMinutes;
+document.getElementById("breakLenLabel").textContent = fmtMMSS(CONFIG.breakLengthSeconds);
+document.getElementById("adLengthLabel").textContent = fmtMMSS(CONFIG.breakLengthSeconds);
 
-  // CHANGE THIS IF ADS ARE NOT HOURLY
-  const nextAd = new Date(now);
-  nextAd.setMinutes(60, 0, 0);
+// Alert state
+let alertsEnabled = false;
+let audioCtx = null;
 
-  const diff = Math.max(0, nextAd - now);
+// Break state
+let inBreak = false;
+let breakEndsAt = null;
 
-  const mins = Math.floor(diff / 60000);
-  const secs = Math.floor((diff % 60000) / 1000);
+// One-time warning guards (so it doesn't spam)
+let warned30 = false;
+let warnedFast = new Set(); // track seconds in last-10 beep
 
-  document.getElementById("currentTime").innerHTML =
-    now.toLocaleTimeString();
+function nowET(){
+  return new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+}
 
-  document.getElementById("nextAd").innerHTML =
-    nextAd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+function ceilToInterval(dt, intervalMin){
+  // Round up to next interval boundary
+  const d = new Date(dt);
+  const ms = d.getTime();
+  const intervalMs = intervalMin * 60 * 1000;
 
-  const cd = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  const countdownEl = document.getElementById("countdown");
+  // Find next boundary: compute minutes since hour/day is messy with DST,
+  // easiest: use epoch rounding in ET-localized time (good enough for station clocks).
+  const nextMs = Math.ceil(ms / intervalMs) * intervalMs;
+  return new Date(nextMs);
+}
 
-  countdownEl.innerHTML = cd;
+function fmtMMSS(totalSeconds){
+  const s = Math.max(0, Math.floor(totalSeconds));
+  const mm = String(Math.floor(s / 60)).padStart(2, "0");
+  const ss = String(s % 60).padStart(2, "0");
+  return `${mm}:${ss}`;
+}
 
-  if (mins === 0 && secs <= 30) {
-    countdownEl.classList.add("warning");
+function beep(durationMs=140, frequency=880, volume=0.12){
+  if(!alertsEnabled) return;
+  if(!audioCtx) return;
+
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = "sine";
+  o.frequency.value = frequency;
+  g.gain.value = volume;
+
+  o.connect(g);
+  g.connect(audioCtx.destination);
+
+  o.start();
+  setTimeout(()=>{ o.stop(); }, durationMs);
+}
+
+function vibrate(pattern){
+  if(!alertsEnabled) return;
+  if(!("vibrate" in navigator)) return;
+  navigator.vibrate(pattern);
+}
+
+function setPill(id, text, klass){
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = "pill" + (klass ? " " + klass : "");
+}
+
+function enterBreak(now){
+  inBreak = true;
+  breakEndsAt = new Date(now.getTime() + CONFIG.breakLengthSeconds * 1000);
+
+  // show banner
+  document.getElementById("liveBanner").classList.add("show");
+  document.getElementById("statusPill").textContent = "IN AD BREAK";
+  document.getElementById("statusPill").className = "pill bad";
+
+  // Stronger alert at break start
+  beep(220, 660, 0.16);
+  setTimeout(()=>beep(220, 660, 0.16), 260);
+  vibrate([200, 120, 200]);
+
+  // reset warning guards for next cycle
+  warned30 = false;
+  warnedFast.clear();
+}
+
+function exitBreak(){
+  inBreak = false;
+  breakEndsAt = null;
+
+  document.getElementById("liveBanner").classList.remove("show");
+  document.getElementById("statusPill").textContent = "Clock Running";
+  document.getElementById("statusPill").className = "pill ok";
+
+  // reset warning guards for the next cycle
+  warned30 = false;
+  warnedFast.clear();
+}
+
+function update(){
+  const now = nowET();
+  document.getElementById("currentTime").textContent = now.toLocaleTimeString([], { hour:"2-digit", minute:"2-digit", second:"2-digit" });
+
+  // If we are in the ad break, show remaining
+  if(inBreak){
+    const remainingMs = breakEndsAt - now;
+    const remSec = Math.ceil(remainingMs / 1000);
+
+    document.getElementById("adRemainingLabel").textContent = fmtMMSS(remSec);
+
+    // when break ends, leave break state
+    if(remainingMs <= 0){
+      exitBreak();
+    }
+
+    // still compute next ad break for display after break ends
+  }
+
+  // compute next break time (even during break)
+  const nextBreak = ceilToInterval(now, CONFIG.intervalMinutes);
+
+  // If we are NOT in break and we've hit/passed the boundary (countdown <= 0), start break
+  const diffMs = nextBreak - now;
+  const diffSec = Math.ceil(diffMs / 1000);
+
+  // Display next break time (hour/min)
+  document.getElementById("nextAdTime").textContent = nextBreak.toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" });
+
+  // Countdown logic:
+  // - if inBreak, countdown should show "—" or next break after this one; but DJs mainly watch "LIVE ADS"
+  // We'll show next break countdown even during break, but it may be close to full interval.
+  document.getElementById("countdown").textContent = fmtMMSS(diffSec);
+
+  // Warning logic only when not in break
+  if(!inBreak){
+    // 30-second warning
+    if(alertsEnabled && diffSec === CONFIG.warningAtSeconds && !warned30){
+      warned30 = true;
+      setPill("warnPill", "30s Warning: ON", "warn");
+      setPill("vibePill", ("vibrate" in navigator) ? "Vibration: ON" : "Vibration: N/A", ("vibrate" in navigator) ? "warn" : "");
+
+      // triple beep + vibration
+      beep(160, 880, 0.14);
+      setTimeout(()=>beep(160, 880, 0.14), 220);
+      setTimeout(()=>beep(160, 880, 0.14), 440);
+
+      vibrate([120, 80, 120]);
+    } else if(diffSec !== CONFIG.warningAtSeconds){
+      // reset the UI pill if not exactly at 30, but keep it informative
+      setPill("warnPill", "30s Warning: " + (alertsEnabled ? "READY" : "OFF"), alertsEnabled ? "ok" : "");
+      setPill("vibePill", ("vibrate" in navigator) ? (alertsEnabled ? "Vibration: READY" : "Vibration: OFF") : "Vibration: N/A",
+        ("vibrate" in navigator) ? (alertsEnabled ? "ok" : "") : ""
+      );
+    }
+
+    // Faster beeps in last N seconds
+    if(alertsEnabled && diffSec <= CONFIG.fasterBeepLastSeconds && diffSec > 0){
+      if(!warnedFast.has(diffSec)){
+        warnedFast.add(diffSec);
+        beep(90, 990, 0.10);
+        if(diffSec <= 5) vibrate(40);
+      }
+    }
+
+    // Break start
+    if(diffMs <= 250 && diffSec <= 0){
+      enterBreak(now);
+    }
+
+    // Countdown styling
+    const cdEl = document.getElementById("countdown");
+    cdEl.className = "val";
+    if(diffSec <= 30){
+      cdEl.style.color = "var(--red)";
+      cdEl.style.textShadow = "0 0 18px rgba(255,59,59,0.18)";
+    } else if(diffSec <= 120){
+      cdEl.style.color = "var(--gold)";
+      cdEl.style.textShadow = "0 0 18px rgba(255,215,0,0.14)";
+    } else {
+      cdEl.style.color = "var(--green)";
+      cdEl.style.textShadow = "0 0 18px rgba(0,255,102,0.14)";
+    }
   } else {
-    countdownEl.classList.remove("warning");
+    // In break: countdown is less important; keep calm styling
+    const cdEl = document.getElementById("countdown");
+    cdEl.style.color = "var(--muted)";
+    cdEl.style.textShadow = "none";
+
+    // Update remaining label even if we started break earlier
+    if(breakEndsAt){
+      const remainingMs = breakEndsAt - now;
+      const remSec = Math.ceil(remainingMs / 1000);
+      document.getElementById("adRemainingLabel").textContent = fmtMMSS(remSec);
+    }
   }
 }
 
-setInterval(updateClock, 1000);
-updateClock();
-</script>
+// Enable Audio & Alerts button (required by browsers)
+document.getElementById("enableAlertsBtn").addEventListener("click", async () => {
+  try{
+    // create/resume audio context
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    await audioCtx.resume();
 
+    alertsEnabled = true;
+    document.getElementById("alertStatus").textContent = "Alerts: ON";
+    document.getElementById("alertStatus").className = "pill ok";
+
+    // quick confirm beep + vibration
+    beep(160, 880, 0.14);
+    setTimeout(()=>beep(160, 660, 0.14), 220);
+    vibrate([60, 40, 60]);
+
+  } catch(e){
+    alertsEnabled = false;
+    document.getElementById("alertStatus").textContent = "Alerts: BLOCKED";
+    document.getElementById("alertStatus").className = "pill bad";
+  }
+});
+
+// Fullscreen (kiosk)
+document.getElementById("fullscreenBtn").addEventListener("click", async () => {
+  const el = document.documentElement;
+  try{
+    if(!document.fullscreenElement){
+      await el.requestFullscreen();
+    } else {
+      await document.exitFullscreen();
+    }
+  } catch(e){
+    // ignore
+  }
+});
+
+// Kick off loop
+setInterval(update, 250);
+update();
+</script>
 </body>
 </html>
